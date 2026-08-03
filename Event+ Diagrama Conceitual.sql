@@ -1,0 +1,132 @@
+CREATE DATABASE manutencao_industrial
+
+CREATE TABLE Pecas (
+    iDPeca UNIQUEIDENTIFIER DEFAULT NEWID() PRIMARY KEY,
+    nomePeca VARCHAR(100) NOT NULL,
+    preco DECIMAL(10,2) NOT NULL 
+);
+
+--JA CRIEI A DE CIMA
+
+CREATE TABLE Setor (
+    iDSetor UNIQUEIDENTIFIER DEFAULT NEWID() PRIMARY KEY,
+    nomeSetor VARCHAR(100) NOT NULL
+);
+
+CREATE TABLE Maquina (
+    iDMaquina UNIQUEIDENTIFIER DEFAULT NEWID() PRIMARY KEY,
+    iDSetor UNIQUEIDENTIFIER NOT NULL,
+    nomeMaquina VARCHAR(100) NOT NULL
+
+    CONSTRAINT FK_Maquina_Setor FOREIGN KEY (iDSetor) 
+        REFERENCES Setor(iDSetor)
+);
+
+--JA CRIEI A DE CIMA
+
+CREATE TABLE Ordem_de_Servico (
+    iDOS UNIQUEIDENTIFIER DEFAULT NEWID() PRIMARY KEY,
+    iDMaquina UNIQUEIDENTIFIER NOT NULL,
+    dataOS DATETIME DEFAULT GETDATE(),
+    descricaoOS VARCHAR(500) 
+
+    CONSTRAINT FK_OS_Maquina FOREIGN KEY (iDMaquina) 
+        REFERENCES Maquina(iDMaquina)
+);
+
+CREATE TABLE Tecnicos (
+    iDTecnicos UNIQUEIDENTIFIER DEFAULT NEWID() PRIMARY KEY,
+    nomeTecnico VARCHAR(100) NOT NULL,
+    especialidade VARCHAR(100) NOT NULL,
+    matricula VARCHAR(8) NOT NULL 
+);
+
+--JA CRIEI A DE CIMA
+
+CREATE TABLE OS_Pecas (
+    OS_Pecas UNIQUEIDENTIFIER DEFAULT NEWID() PRIMARY KEY,
+    iDPeca UNIQUEIDENTIFIER NOT NULL,
+    iDOS UNIQUEIDENTIFIER NOT NULL,
+    quantidade INT,
+    precoTotal DECIMAL(10,2)
+
+    CONSTRAINT FK_OSPecas_Pecas FOREIGN KEY (iDPeca) 
+    REFERENCES Pecas(iDPeca),
+    
+    CONSTRAINT FK_OSPecas_OS FOREIGN KEY (iDOS) 
+    REFERENCES Ordem_de_Servico(iDOS)
+);
+
+--JA CRIEI A DE CIMA
+
+CREATE TABLE OS_Tecnicos (
+    OS_Tecnicos UNIQUEIDENTIFIER DEFAULT NEWID() PRIMARY KEY,
+    iDTecnicos UNIQUEIDENTIFIER NOT NULL,
+    iDOS UNIQUEIDENTIFIER NOT NULL,
+    quantidade INT,
+    precoTotal DECIMAL(10,2)
+
+    CONSTRAINT FK_OSTecnicos_Tecnicos FOREIGN KEY (iDTecnicos) 
+    REFERENCES Tecnicos(iDTecnicos),
+    
+    CONSTRAINT FK_OSTecnicos_OS FOREIGN KEY (iDOS) 
+    REFERENCES Ordem_de_Servico(iDOS)
+);
+
+--JA CRIEI A DE CIMA
+
+--Populando o banco
+
+INSERT INTO Setor (nomeSetor) 
+VALUES (' Usinagem');
+
+SELECT * FROM Setor;
+
+--JA CRIEI A DE CIMA
+
+INSERT INTO Pecas (nomePeca, preco) 
+VALUES ('Serra Copo', 350.00);
+
+SELECT * FROM Pecas;
+
+--JA CRIEI A DE CIMA
+
+INSERT INTO Tecnicos (nomeTecnico, especialidade, matricula) 
+VALUES ('Juliana', 'Marcenaria','17079932');
+
+SELECT * FROM Tecnicos;
+
+--JA CRIEI A DE CIMA
+
+INSERT INTO Maquina (iDSetor, nomeMaquina) 
+VALUES ('84502CF5-26E8-4F80-8719-EDFE7E95357A', 'Furadeira Industrial');
+
+SELECT * FROM Maquina;
+
+--JA CRIEI A DE CIMA
+
+INSERT INTO Ordem_de_Servico (iDMaquina,descricaoOS) 
+VALUES ('32F062C4-4F66-4708-8336-58E34E21E6C8','A peça soltou da máquina e quase matou um aluno da FAU');
+
+SELECT * FROM Ordem_de_Servico;
+
+--JA CRIEI A DE CIMA
+
+INSERT INTO OS_Pecas (iDPeca,iDOS, quantidade, precoTotal) 
+VALUES ('23D2B489-8E8A-4658-BF5F-2A532ACFDEDB','29DCA54C-BCF2-4C44-B58A-71BCC68FFAA4',1, 350.00);
+
+SELECT * FROM OS_Pecas;
+
+--JA CRIEI A DE CIMA
+
+INSERT INTO OS_Tecnicos (iDTecnicos,iDOS) 
+VALUES ('C5EC56C1-0ED9-4F05-A9E1-865F9879FE9F','29DCA54C-BCF2-4C44-B58A-71BCC68FFAA4');
+
+SELECT * FROM OS_Tecnicos;
+
+--
+ALTER TABLE OS_Tecnicos
+DROP COLUMN quantidade, precoTotal;
+
+
+
